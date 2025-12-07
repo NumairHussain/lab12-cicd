@@ -9,8 +9,8 @@ from flask import Flask, Response, jsonify, request
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
 from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
-from werkzeug.exceptions import BadRequest, HTTPException
 from presidio_anonymizer.entities import OperatorConfig
+from werkzeug.exceptions import BadRequest, HTTPException
 
 
 DEFAULT_PORT = "3000"
@@ -105,7 +105,7 @@ class Server:
                        "example output": "Call GOAT at vibe check",
                        "description": "Example output of the genz anonymizer."}
             return jsonify(example)
-        
+
         @self.app.route("/genz", methods=["GET"])
         def genz() -> Response:
             """Anonymize text using the Gen-Z custom operator."""
@@ -132,7 +132,7 @@ class Server:
             )
 
             return Response(anonymized.to_json(), mimetype="application/json")
-                
+
         @self.app.errorhandler(InvalidParamError)
         def invalid_param(err):
             self.logger.warning(
