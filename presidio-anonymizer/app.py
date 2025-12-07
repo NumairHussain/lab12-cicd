@@ -101,7 +101,9 @@ class Server:
         @self.app.route("/genz-preview", methods=["GET"])
         def genz_preview():
             """Return a preview of the Gen-Z anonymization."""
-            example = {"example": "Call Emily at 577-988-1234","example output": "Call GOAT at vibe check","description": "Example output of the genz anonymizer."}
+            example = {"example": "Call Emily at 577-988-1234",
+                       "example output": "Call GOAT at vibe check",
+                       "description": "Example output of the genz anonymizer."}
             return jsonify(example)
         
         @self.app.route("/genz", methods=["GET"])
@@ -134,7 +136,7 @@ class Server:
         @self.app.errorhandler(InvalidParamError)
         def invalid_param(err):
             self.logger.warning(
-                f"Request failed with parameter validation error: {err.err_msg}"
+                "Request failed with parameter validation error: %s", err.err_msg
             )
             return jsonify(error=err.err_msg), 422
 
