@@ -48,3 +48,9 @@ def __get_multipart_form_data(file):
             "image": (file.name, file, "multipart/form-data"),
         }
     return multipart_form_data
+
+def genz(data):
+    response = requests.get(
+        f"{ANONYMIZER_BASE_URL}/genz", headers=DEFAULT_HEADERS
+    )
+    return response.status_code, response.content
