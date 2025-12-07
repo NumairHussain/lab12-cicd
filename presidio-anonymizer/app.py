@@ -7,9 +7,8 @@ from pathlib import Path
 
 from flask import Flask, Response, jsonify, request
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
-from presidio_anonymizer.entities import InvalidParamError
+from presidio_anonymizer.entities import InvalidParamError, OperatorConfig
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
-from presidio_anonymizer.entities import OperatorConfig
 from werkzeug.exceptions import BadRequest, HTTPException
 
 
