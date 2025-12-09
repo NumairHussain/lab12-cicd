@@ -106,7 +106,7 @@ class Server:
                        "description": "Example output of the genz anonymizer."}
             return jsonify(example)
 
-        @self.app.route("/genz", methods=["GET"])
+        @self.app.route("/genz", methods=["POST"])
         def genz() -> Response:
             """Anonymize text using the Gen-Z custom operator."""
             content = request.get_json()
