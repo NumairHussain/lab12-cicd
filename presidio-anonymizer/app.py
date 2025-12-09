@@ -7,8 +7,10 @@ from pathlib import Path
 
 from flask import Flask, Response, jsonify, request
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
-from presidio_anonymizer.entities import InvalidParamError
-from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
+from presidio_anonymizer.entities import InvalidParamError, OperatorConfig
+from presidio_anonymizer.services.app_entities_convertor import (
+    AppEntitiesConvertor,
+)
 from werkzeug.exceptions import BadRequest, HTTPException
 
 DEFAULT_PORT = "3000"
@@ -96,10 +98,45 @@ class Server:
             """Return a list of supported deanonymizers."""
             return jsonify(self.deanonymize.get_deanonymizers())
 
+        @self.app.route("/genz-preview", methods=["GET"])
+        def genz_preview():
+            """Return a preview of the Gen-Z anonymization."""
+            example = {"example": "Call Emily at 577-988-1234",
+                       "example output": "Call GOAT at vibe check",
+                       "description": "Example output of the genz anonymizer."}
+            return jsonify(example)
+
+        @self.app.route("/genz", methods=["POST"])
+        def genz() -> Response:
+            """Anonymize text using the Gen-Z custom operator."""
+            content = request.get_json()
+            if not content:
+                raise BadRequest("Invalid request json")
+
+            text = content.get("text", "")
+
+            # Force the operator to "genz"
+            operators = {
+                "DEFAULT": OperatorConfig(operator_name="genz", params={})
+            }
+
+            # If analyzer_results are provided
+            analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
+                content.get("analyzer_results", [])
+            )
+
+            anonymized = self.anonymizer.anonymize(
+                text=text,
+                analyzer_results=analyzer_results,
+                operators=operators,
+            )
+
+            return Response(anonymized.to_json(), mimetype="application/json")
+
         @self.app.errorhandler(InvalidParamError)
         def invalid_param(err):
             self.logger.warning(
-                f"Request failed with parameter validation error: {err.err_msg}"
+                "Request failed with parameter validation error: %s", err.err_msg
             )
             return jsonify(error=err.err_msg), 422
 
