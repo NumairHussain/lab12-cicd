@@ -134,10 +134,11 @@ jobs:
           python -m venv env
           source env/bin/activate
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
           pip install presidio_analyzer
           pip install presidio_anonymizer
           python -m spacy download en_core_web_lg
+          docker-compose up --build -d 
+          pip install -r requirements.txt
 
       - name: Wait for services to be ready
         run: sleep 60
@@ -146,7 +147,7 @@ jobs:
         working-directory: e2e-tests
         run: |
           source env/bin/activate
-          pytest -v
+          pytest
 
       - name: Stop Docker containers
         if: always()
